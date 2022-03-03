@@ -10,7 +10,6 @@ function composeEmail() {
 }
 
 function archiveEmail(emailID, archived) {
-  console.log(archived);
   fetch(`/emails/${emailID}`, {
     method: 'PUT',
     body: JSON.stringify({
@@ -72,33 +71,20 @@ function createEmailContainer(email, mailbox) {
   document.querySelector('#emails-view').appendChild(emailContainer);
 }
 
-function loadEmails(email, mailbox) {
-  const currentUser = document.querySelector('#user_email').textContent;
-
-  if (
-    mailbox === 'inbox' &&
-    email.recipients.includes(currentUser) &&
-    email.archived === false
-  ) {
-    createEmailContainer(email, mailbox);
-  } else if (
-    mailbox === 'archived' &&
-    email.recipients.includes(currentUser) &&
-    email.archived === true
-  ) {
-    createEmailContainer(email, mailbox);
-  } else {
-    createEmailContainer(email, mailbox);
-  }
-}
+/* --------------------
+SEND EMAILS
+ -----------------------*/
 
 function sendEmail() {
+  const recipients1 = document.querySelector('#compose-recipients').textContent;
+  const subject1 = document.querySelector('#compose-subject').textContent;
+  const body1 = document.querySelector('#compose-body').textContent;
   fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
-      recipients: 'acampos@example.com',
-      subject: 'Meeting time',
-      body: 'How about we meet tomorrow at 3pm?',
+      recipients: recipients1,
+      subject: subject1,
+      body: body1,
     }),
   })
     .then((response) => response.json())
@@ -107,6 +93,14 @@ function sendEmail() {
       console.log(result);
     });
 }
+
+/* document
+  .querySelector('input[type:"submit"]')
+  .addEventListener('click', () => sendEmail());
+ */
+/* --------------------
+GET EMAILS
+ -----------------------*/
 
 function loadMailbox(mailbox) {
   // Show the mailbox and hide other views
@@ -121,7 +115,7 @@ function loadMailbox(mailbox) {
   fetch(`/emails/${mailbox}`)
     .then((response) => response.json())
     .then((emails) => {
-      emails.forEach((email) => loadEmails(email, mailbox));
+      emails.forEach((email) => createEmailContainer(email, mailbox));
     });
 }
 
