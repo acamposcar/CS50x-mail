@@ -1,14 +1,3 @@
-function composeEmail() {
-  // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
-
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
-}
-
 function archiveEmail(emailID, archived) {
   fetch(`/emails/${emailID}`, {
     method: 'PUT',
@@ -24,35 +13,91 @@ function archiveEmail(emailID, archived) {
   });
 }
 
+/* --------------------
+SINGLE EMAILS VIEW
+ -----------------------*/
+
+function openEmail(email) {
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#open-email-view').style.display = 'block';
+
+  // Clear previous emails
+  const emailContainer = document.querySelector('#open-email-view');
+  emailContainer.innerHTML = '';
+
+  const recipients = document.createElement('div');
+  recipients.classList.add('open-email-recipients');
+  recipients.textContent = email.recipients;
+  emailContainer.appendChild(recipients);
+
+  const sender = document.createElement('div');
+  sender.classList.add('open-email-sender');
+  sender.textContent = email.sender;
+  emailContainer.appendChild(sender);
+
+  const time = document.createElement('div');
+  time.classList.add('open-email-time');
+  time.textContent = email.timestamp;
+  emailContainer.appendChild(time);
+
+  const subject = document.createElement('div');
+  subject.classList.add('open-email-subject');
+  subject.textContent = email.subject;
+  emailContainer.appendChild(subject);
+
+  const body = document.createElement('div');
+  body.classList.add('open-email-body');
+  body.textContent = email.body;
+  emailContainer.appendChild(body);
+}
+
+function getEmail(emailID) {
+  fetch(`/emails/${emailID}`)
+    .then((response) => response.json())
+    .then((email) => openEmail(email));
+}
+
+/* --------------------
+INBOX VIEW
+ -----------------------*/
+
 function createEmailContainer(email, mailbox) {
   const emailContainer = document.createElement('div');
   if (email.read === true) {
-    emailContainer.classList.add('email', 'read');
+    emailContainer.classList.add('email-container', 'read');
   } else {
-    emailContainer.classList.add('email');
+    emailContainer.classList.add('email-container');
   }
+
+  // Container to define a clickable zone (All except Archive button)
+  const clickableContainer = document.createElement('div');
+  clickableContainer.classList.add('email-clickable-container');
 
   if (mailbox === 'inbox' || mailbox === 'archive') {
     const sender = document.createElement('div');
     sender.classList.add('email-from');
     sender.textContent = email.sender;
-    emailContainer.appendChild(sender);
+    clickableContainer.appendChild(sender);
   } else {
     const receiver = document.createElement('div');
     receiver.classList.add('email-from');
-    receiver.textContent = email.recipients;
-    emailContainer.appendChild(receiver);
+    receiver.textContent = email.recipients[0]; // TODO: Show all recipients or more
+    clickableContainer.appendChild(receiver);
   }
 
   const subject = document.createElement('div');
   subject.classList.add('email-subject');
-  subject.textContent = email.body;
-  emailContainer.appendChild(subject);
+  subject.textContent = email.subject.slice(0, 50);
+  clickableContainer.appendChild(subject);
 
   const time = document.createElement('div');
   time.classList.add('email-time');
   time.textContent = email.timestamp;
-  emailContainer.appendChild(time);
+  clickableContainer.appendChild(time);
+
+  emailContainer.appendChild(clickableContainer);
 
   if (mailbox !== 'sent') {
     const archiveButton = document.createElement('button');
@@ -69,6 +114,8 @@ function createEmailContainer(email, mailbox) {
   }
 
   document.querySelector('#emails-view').appendChild(emailContainer);
+
+  clickableContainer.addEventListener('click', () => getEmail(email.id)); // If not Submit button will make GET request
 }
 
 /* --------------------
@@ -76,28 +123,38 @@ SEND EMAILS
  -----------------------*/
 
 function sendEmail() {
-  const recipients1 = document.querySelector('#compose-recipients').textContent;
-  const subject1 = document.querySelector('#compose-subject').textContent;
-  const body1 = document.querySelector('#compose-body').textContent;
   fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
-      recipients: recipients1,
-      subject: subject1,
-      body: body1,
+      recipients: document.querySelector('#compose-recipients').value,
+      subject: document.querySelector('#compose-subject').value,
+      body: document.querySelector('#compose-body').value,
     }),
   })
     .then((response) => response.json())
-    .then((result) => {
-      // Print result
-      console.log(result);
+    .catch((error) => console.error('Error:', error)) // TODO handle error. Call another function???
+    .then((result) => console.log('Success:', result))
+    .then(loadMailbox('sent'));
+}
+
+function composeEmail() {
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#open-email-view').style.display = 'none';
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = '';
+  document.querySelector('#compose-subject').value = '';
+  document.querySelector('#compose-body').value = '';
+  document
+    .querySelector('input[type="submit"]')
+    .addEventListener('click', (event) => {
+      event.preventDefault(); // If not Submit button will make GET request
+      sendEmail();
     });
 }
 
-/* document
-  .querySelector('input[type:"submit"]')
-  .addEventListener('click', () => sendEmail());
- */
 /* --------------------
 GET EMAILS
  -----------------------*/
@@ -106,6 +163,7 @@ function loadMailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#open-email-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${

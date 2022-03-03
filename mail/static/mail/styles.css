@@ -2,18 +2,34 @@ textarea {
   min-height: 400px;
 }
 
-.email {
+.email-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-style: solid;
+  border-width: thin;
+  gap: 30px;
+  padding-right: 10px;
+}
+.email-container:hover {
+  background-color: rgb(223, 219, 219);
+}
+
+.email-clickable-container {
+  cursor: pointer;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 30px;
-  border-style: solid;
-  border-width: thin;
   padding: 10px;
+  flex: 1;
 }
 
-.email.read {
-  background-color: gray;
+.email-container.read {
+  background-color: rgb(184, 179, 179);
+}
+.email-container.read:hover {
+  background-color: rgb(139, 134, 134);
 }
 .email-from {
   width: 200px;
