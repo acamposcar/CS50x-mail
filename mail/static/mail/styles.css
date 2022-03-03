@@ -12,7 +12,11 @@ textarea {
   padding: 10px;
 }
 
+.email.read {
+  background-color: gray;
+}
 .email-from {
+  width: 200px;
 }
 
 .email-subject {

@@ -27,7 +27,11 @@ function archiveEmail(emailID, archived) {
 
 function createEmailContainer(email, mailbox) {
   const emailContainer = document.createElement('div');
-  emailContainer.classList.add('email');
+  if (email.read === true) {
+    emailContainer.classList.add('email', 'read');
+  } else {
+    emailContainer.classList.add('email');
+  }
 
   if (mailbox === 'inbox' || mailbox === 'archive') {
     const sender = document.createElement('div');
@@ -53,7 +57,7 @@ function createEmailContainer(email, mailbox) {
 
   if (mailbox !== 'sent') {
     const archiveButton = document.createElement('button');
-    archiveButton.classList.add('email-archive');
+    archiveButton.classList.add('email-archive', 'btn', 'btn-primary');
     if (email.archived) {
       archiveButton.textContent = 'Unarchive';
     } else {
