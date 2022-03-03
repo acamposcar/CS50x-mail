@@ -13,6 +13,15 @@ function archiveEmail(emailID, archived) {
   });
 }
 
+function readEmail(emailID) {
+  fetch(`/emails/${emailID}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true,
+    }),
+  });
+}
+
 /* --------------------
 SINGLE EMAILS VIEW
  -----------------------*/
@@ -51,6 +60,8 @@ function openEmail(email) {
   body.classList.add('open-email-body');
   body.textContent = email.body;
   emailContainer.appendChild(body);
+
+  readEmail(email.id);
 }
 
 function getEmail(emailID) {
@@ -115,7 +126,7 @@ function createEmailContainer(email, mailbox) {
 
   document.querySelector('#emails-view').appendChild(emailContainer);
 
-  clickableContainer.addEventListener('click', () => getEmail(email.id)); // If not Submit button will make GET request
+  clickableContainer.addEventListener('click', () => getEmail(email.id));
 }
 
 /* --------------------
