@@ -1,36 +1,45 @@
 {% extends "mail/layout.html" %} {% load static %} {% block body %}
-<h2 id="user_email">{{ request.user.email }}</h2>
+<div id="header"><h3>The Mail     {{ request.user.email }}</h3></div>
+<div id="container-flexbox">
+  <div id="navbar">
 
-<button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
-<button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
-<button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
-<button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
-<a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
-<hr />
-<div id="alert" class="alert alert-danger"></div>
+    <button class="compose-btn btn btn-primary" id="compose">Compose</button>
 
-<div id="emails-view"></div>
-
-<div id="open-email-view">
-
-  <div class="card">
-    <div class="card-header">
-      <h4 id="open-email-subject"></h4>
-      <div id="open-email-sender"></div>
-      <div id="open-email-recipients"></div>
-      <div id="open-email-time"></div>
-      <hr>
-      <button id="open-email-reply" class="btn btn-primary">Reply</button>
-      <button id="open-email-archive" class="btn btn-primary">Archive</button>
-    </div>
-    <div class="card-body">
-      <p id="open-email-body"></p>
-    </div>
+    <div class="nav-bn" id="inbox">Inbox</div>
+    <div class="nav-bn" id="sent">Sent</div>
+    <div class="nav-bn" id="archived">Archived</div>
+    <a class="nav-bn" href="{% url 'logout' %}">Log Out</a>
+    <hr />
   </div>
+  <div>
+    <div id="alert" class="alert alert-danger"></div>
 
-</div>
+    <div id="emails-view"></div>
+  </div>
+    <div id="open-email-view">
+      <div id="empty-email">
 
-<div id="compose-view">
+        <h3>Inbox</h3>
+        <div class="mb2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Google_Inbox_by_Gmail_logo.png/250px-Google_Inbox_by_Gmail_logo.png" alt="Conversación"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h4 id="open-email-subject"></h4>
+          <div id="open-email-sender"></div>
+          <div id="open-email-recipients"></div>
+          <div id="open-email-time"></div>
+          <hr>
+          <button id="open-email-reply" class="btn btn-primary">Reply</button>
+          <button id="open-email-archive" class="btn btn-primary">Archive</button>
+        </div>
+        <div class="card-body">
+          <p id="open-email-body"></p>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="compose-view">
   
   <h3>New Email</h3>
   <form id="compose-form">
@@ -52,6 +61,9 @@
     <input type="submit" class="btn btn-primary" />
   </form>
 </div>
+</div>
+
+
 {% endblock %} {% block script %}
 <script src="{% static 'mail/inbox.js' %}"></script>
 {% endblock %}

@@ -36,10 +36,12 @@ function openEmail(email) {
   ----------------*/
 
   // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-email-view').style.display = 'block';
   document.querySelector('#alert').style.display = 'none';
+  document.querySelector('.card').style.display = 'block';
+  document.querySelector('#empty-email').style.display = 'none';
 
   // Fill email information
   document.querySelector('#open-email-subject').textContent = email.subject;
@@ -208,8 +210,11 @@ function loadMailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
-  document.querySelector('#open-email-view').style.display = 'none';
+  document.querySelector('#open-email-view').style.display = 'block';
   document.querySelector('#alert').style.display = 'none';
+
+  document.querySelector('.card').style.display = 'none';
+  document.querySelector('#empty-email').style.display = 'block';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
