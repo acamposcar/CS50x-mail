@@ -1,17 +1,6 @@
-function archiveEmail(emailID, archived) {
-  fetch(`/emails/${emailID}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      archived: !archived,
-    }),
-  }).then(() => {
-    if (archived) {
-      loadMailbox('archive');
-    } else {
-      loadMailbox('inbox');
-    }
-  });
-}
+/* --------------------
+SINGLE EMAILS VIEW
+ -----------------------*/
 
 function readEmail(emailID) {
   fetch(`/emails/${emailID}`, {
@@ -21,10 +10,6 @@ function readEmail(emailID) {
     }),
   });
 }
-
-/* --------------------
-SINGLE EMAILS VIEW
- -----------------------*/
 
 function openEmail(email) {
   // Show compose view and hide other views
@@ -56,6 +41,14 @@ function openEmail(email) {
   subject.textContent = email.subject;
   emailContainer.appendChild(subject);
 
+  const reply = document.createElement('button');
+  reply.classList.add('open-email-reply', 'btn', 'btn-primary');
+  reply.textContent = 'Reply';
+  reply.addEventListener('click', () => {
+    composeEmail(email.sender, email.subject, email.body, email.timestamp);
+  });
+  emailContainer.appendChild(reply);
+
   const body = document.createElement('div');
   body.classList.add('open-email-body');
   body.textContent = email.body;
@@ -73,6 +66,21 @@ function getEmail(emailID) {
 /* --------------------
 INBOX VIEW
  -----------------------*/
+
+function archiveEmail(emailID, archived) {
+  fetch(`/emails/${emailID}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: !archived,
+    }),
+  }).then(() => {
+    if (archived) {
+      loadMailbox('archive');
+    } else {
+      loadMailbox('inbox');
+    }
+  });
+}
 
 function createEmailContainer(email, mailbox) {
   const emailContainer = document.createElement('div');
@@ -148,16 +156,29 @@ function sendEmail() {
     .then(loadMailbox('sent'));
 }
 
-function composeEmail() {
+function composeEmail(sender = [], subject = '', body = '', time = '') {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#open-email-view').style.display = 'none';
 
+  let replySubject;
+  if (subject.slice(0, 3) !== 'Re:') {
+    replySubject = `Re: ${subject}`;
+  } else {
+    replySubject = subject;
+  }
+
+  const replyBody = `
+
+-----------------------------------
+On ${time} ${sender} wrote:
+${body}`;
+
   // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-recipients').value = sender;
+  document.querySelector('#compose-subject').value = replySubject;
+  document.querySelector('#compose-body').value = replyBody;
   document
     .querySelector('input[type="submit"]')
     .addEventListener('click', (event) => {
