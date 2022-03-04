@@ -25,6 +25,9 @@ textarea {
   flex: 1;
 }
 
+.email-container.no-read{
+  font-weight: 500;
+}
 .email-container.read {
   background-color: rgb(184, 179, 179);
 }
