@@ -7,12 +7,31 @@
 <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
 <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
 <hr />
+<div id="alert" class="alert alert-danger"></div>
 
 <div id="emails-view"></div>
 
-<div id="open-email-view"></div>
+<div id="open-email-view">
+
+  <div class="card">
+    <div class="card-header">
+      <h4 id="open-email-subject"></h4>
+      <div id="open-email-sender"></div>
+      <div id="open-email-recipients"></div>
+      <div id="open-email-time"></div>
+      <hr>
+      <button id="open-email-reply" class="btn btn-primary">Reply</button>
+      <button id="open-email-archive" class="btn btn-primary">Archive</button>
+    </div>
+    <div class="card-body">
+      <p id="open-email-body"></p>
+    </div>
+  </div>
+
+</div>
 
 <div id="compose-view">
+  
   <h3>New Email</h3>
   <form id="compose-form">
     <div class="form-group">

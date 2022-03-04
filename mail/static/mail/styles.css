@@ -47,3 +47,7 @@ textarea {
 
 .email-archive {
 }
+
+#open-email-body{
+  white-space: pre-line;
+}

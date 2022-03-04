@@ -2,11 +2,11 @@
 SINGLE EMAILS VIEW
  -----------------------*/
 
-function readEmail(emailID) {
+function readEmail(email) {
   /*----------------
   Mark email as read when it is opened
   ----------------*/
-  fetch(`/emails/${emailID}`, {
+  fetch(`/emails/${email.id}`, {
     method: 'PUT',
     body: JSON.stringify({
       read: true,
@@ -14,18 +14,18 @@ function readEmail(emailID) {
   });
 }
 
-function getEmail(emailID) {
+function getEmail(email) {
   /*----------------
   Gets email information from database
   ----------------*/
-  fetch(`/emails/${emailID}`)
+  fetch(`/emails/${email.id}`)
     .then((response) => response.json())
-    .then((email) => {
-      if (email.error) {
+    .then((emailData) => {
+      if (emailData.error) {
         document.querySelector('#alert').style.display = 'block';
-        document.querySelector('#alert').textContent = email.error;
+        document.querySelector('#alert').textContent = emailData.error;
       } else {
-        openEmail(email);
+        openEmail(emailData);
       }
     });
 }
@@ -41,66 +41,34 @@ function openEmail(email) {
   document.querySelector('#open-email-view').style.display = 'block';
   document.querySelector('#alert').style.display = 'none';
 
-  // Clear previous emails
-  const emailContainer = document.querySelector('#open-email-view');
-  emailContainer.innerHTML = '';
-
-  // Create subject div
-  const subject = document.createElement('h4');
-  subject.classList.add('open-email-subject');
-  subject.innerHTML = email.subject;
-  emailContainer.appendChild(subject);
-
-  // Create senders div
-  const sender = document.createElement('div');
-  sender.classList.add('open-email-sender');
-  sender.innerHTML = `<strong>From:</strong> ${email.sender}`;
-  emailContainer.appendChild(sender);
-
-  // Create recipients div
-  const recipients = document.createElement('div');
-  recipients.classList.add('open-email-recipients');
-  recipients.innerHTML = `<strong>To:</strong> ${email.recipients}`;
-  emailContainer.appendChild(recipients);
-
-  // Create timestamp div
-  const time = document.createElement('div');
-  time.classList.add('open-email-time');
-  time.innerHTML = `<strong>Time:</strong>: ${email.timestamp}`;
-  emailContainer.appendChild(time);
-
-  // Create reply button
-  const reply = document.createElement('button');
-  reply.classList.add('open-email-reply', 'btn', 'btn-primary');
-  reply.textContent = 'Reply';
-  reply.addEventListener('click', () => { replyEmail(email); });
-  emailContainer.appendChild(reply);
-
-  // Create body div
-  const body = document.createElement('div');
-  body.classList.add('open-email-body');
-  body.textContent = email.body;
-  emailContainer.appendChild(body);
+  // Fill email information
+  document.querySelector('#open-email-subject').textContent = email.subject;
+  document.querySelector('#open-email-sender').textContent = `From: ${email.sender}`;
+  document.querySelector('#open-email-recipients').textContent = `To: ${email.recipients}`;
+  document.querySelector('#open-email-time').textContent = `On: ${email.timestamp}`;
+  document.querySelector('#open-email-reply').addEventListener('click', () => { replyEmail(email); });
+  document.querySelector('#open-email-archive').addEventListener('click', () => { archiveEmail(email); });
+  document.querySelector('#open-email-body').innerHTML = email.body;
 
   // Mark email as read when user opens the email
-  readEmail(email.id);
+  readEmail(email);
 }
 
 /* --------------------
 INBOX VIEW
  -----------------------*/
 
-function archiveEmail(emailID, archived) {
+function archiveEmail(email) {
   /*----------------
   Archives or unarchives email when button is pressed
   ----------------*/
-  fetch(`/emails/${emailID}`, {
+  fetch(`/emails/${email.id}`, {
     method: 'PUT',
     body: JSON.stringify({
-      archived: !archived,
+      archived: !email.archived,
     }),
   }).then(() => {
-    if (archived) {
+    if (email.archived) {
       loadMailbox('archive');
     } else {
       loadMailbox('inbox');
@@ -124,7 +92,7 @@ function createEmailContainer(email, mailbox) {
   // Container to define a clickable zone (All except Archive button)
   const clickableContainer = document.createElement('div');
   clickableContainer.classList.add('email-clickable-container');
-  clickableContainer.addEventListener('click', () => getEmail(email.id));
+  clickableContainer.addEventListener('click', () => getEmail(email));
 
   // Creates recipient/sender div
   // If selected mailbox is inbox or archive, first field will be the sender
@@ -161,7 +129,7 @@ function createEmailContainer(email, mailbox) {
     const archiveButton = document.createElement('button');
     archiveButton.classList.add('email-archive', 'btn', 'btn-primary');
     archiveButton.textContent = email.archived ? 'Unarchive' : 'Archive';
-    archiveButton.addEventListener('click', () => { archiveEmail(email.id, email.archived); });
+    archiveButton.addEventListener('click', () => { archiveEmail(email); });
     emailContainer.appendChild(archiveButton);
   }
 
