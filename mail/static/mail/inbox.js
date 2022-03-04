@@ -156,27 +156,32 @@ function sendEmail() {
     .then(loadMailbox('sent'));
 }
 
-function composeEmail(sender = [], subject = '', body = '', time = '') {
+function composeEmail(recipient = '', subject = '', body = '', time = '') {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#open-email-view').style.display = 'none';
 
   let replySubject;
-  if (subject.slice(0, 3) !== 'Re:') {
+  if (subject.slice(0, 3) !== 'Re:' && recipient !== '') {
     replySubject = `Re: ${subject}`;
   } else {
     replySubject = subject;
   }
 
-  const replyBody = `
+  let replyBody;
+  if (recipient !== '') {
+    replyBody = `
 
 -----------------------------------
-On ${time} ${sender} wrote:
+On ${time} ${recipient} wrote:
 ${body}`;
+  } else {
+    replyBody = body;
+  }
 
   // Clear out composition fields
-  document.querySelector('#compose-recipients').value = sender;
+  document.querySelector('#compose-recipients').value = recipient;
   document.querySelector('#compose-subject').value = replySubject;
   document.querySelector('#compose-body').value = replyBody;
   document
@@ -220,8 +225,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .querySelector('#archived')
     .addEventListener('click', () => loadMailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', composeEmail);
-
+  document.querySelector('#compose').addEventListener('click', () => {
+    composeEmail();
+  });
   // By default, load the inbox
   loadMailbox('inbox');
 });
