@@ -1,7 +1,13 @@
 {% extends "mail/layout.html" %}
-
+{% load static %}
 {% block body %}
-
+<nav class="navbar navbar-expand-lg" id="header">
+    <a class="navbar-brand " href="/">
+    <img src="{% static 'mail/mail.svg' %}" width="35" height="35" class="d-inline-block align-top" alt="">
+    The Mail
+  </a>
+</nav>
+    <div id="login">
     <h2>Login</h2>
 
     {% if message %}
@@ -16,9 +22,9 @@
         <div class="form-group">
             <input class="form-control" type="password" name="password" placeholder="Password">
         </div>
-        <input class="btn btn-primary" type="submit" value="Login">
+        <input class="btn btn-light" type="submit" value="Login">
     </form>
 
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
-
+    <small>  Don't have an account? <a href="{% url 'register' %}">Register here.</a></small> 
+    </div>
 {% endblock %}

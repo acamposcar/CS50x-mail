@@ -6,6 +6,11 @@ function readEmail(email) {
   /*----------------
   Mark email as read when it is opened
   ----------------*/
+
+  // Change class to show as read without reloading page
+  document.querySelector(`#id-${email.id}`).classList.add('read');
+  document.querySelector(`#id-${email.id}`).classList.remove('no-read');
+
   fetch(`/emails/${email.id}`, {
     method: 'PUT',
     body: JSON.stringify({
@@ -22,8 +27,8 @@ function getEmail(email) {
     .then((response) => response.json())
     .then((emailData) => {
       if (emailData.error) {
-        document.querySelector('#alert').style.display = 'block';
-        document.querySelector('#alert').textContent = emailData.error;
+        document.querySelector('#alert-email').style.display = 'block';
+        document.querySelector('#alert-email').textContent = emailData.error;
       } else {
         openEmail(emailData);
       }
@@ -39,17 +44,16 @@ function openEmail(email) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-email-view').style.display = 'block';
-  document.querySelector('#alert').style.display = 'none';
+  document.querySelector('#alert-email').style.display = 'none';
   document.querySelector('.card').style.display = 'block';
   document.querySelector('#empty-email').style.display = 'none';
 
   // Fill email information
   document.querySelector('#open-email-subject').textContent = email.subject;
   document.querySelector('#open-email-sender').textContent = `From: ${email.sender}`;
-  document.querySelector('#open-email-recipients').textContent = `To: ${email.recipients}`;
+  document.querySelector('#open-email-recipients').textContent = `To: ${email.recipients.toString().replace(',', ', ')}`;
   document.querySelector('#open-email-time').textContent = `On: ${email.timestamp}`;
   document.querySelector('#open-email-reply').addEventListener('click', () => { replyEmail(email); });
-  document.querySelector('#open-email-archive').addEventListener('click', () => { archiveEmail(email); });
   document.querySelector('#open-email-body').innerHTML = email.body;
 
   // Mark email as read when user opens the email
@@ -70,11 +74,7 @@ function archiveEmail(email) {
       archived: !email.archived,
     }),
   }).then(() => {
-    if (email.archived) {
-      loadMailbox('archive');
-    } else {
-      loadMailbox('inbox');
-    }
+    document.querySelector(`#id-${email.id}`).classList.add('hide');
   });
 }
 
@@ -90,11 +90,16 @@ function createEmailContainer(email, mailbox) {
   } else {
     emailContainer.classList.add('email-container', 'no-read');
   }
+  emailContainer.setAttribute('id', `id-${email.id}`);
 
   // Container to define a clickable zone (All except Archive button)
   const clickableContainer = document.createElement('div');
   clickableContainer.classList.add('email-clickable-container');
   clickableContainer.addEventListener('click', () => getEmail(email));
+
+  // Container to define a flex zone (sender, timestamp, archive button)
+  const flexClickableContainer = document.createElement('div');
+  flexClickableContainer.classList.add('email-flex-clickable-container');
 
   // Creates recipient/sender div
   // If selected mailbox is inbox or archive, first field will be the sender
@@ -103,13 +108,22 @@ function createEmailContainer(email, mailbox) {
     const sender = document.createElement('div');
     sender.classList.add('email-from');
     sender.textContent = email.sender;
-    clickableContainer.appendChild(sender);
+    flexClickableContainer.appendChild(sender);
   } else {
     const recipient = document.createElement('div');
     recipient.classList.add('email-from');
-    recipient.textContent = email.recipients[0]; // TODO: Show all recipients or more
-    clickableContainer.appendChild(recipient);
+    recipient.textContent = `${email.recipients.toString().replace(',', ', ').slice(0, 30)}`; // TODO: Show all recipients or more
+    flexClickableContainer.appendChild(recipient);
   }
+
+  // Creates timestamp div
+  const time = document.createElement('div');
+  time.classList.add('email-time');
+  time.textContent = email.timestamp;
+  flexClickableContainer.appendChild(time);
+
+  // Appends containers
+  clickableContainer.appendChild(flexClickableContainer);
 
   // Creates subject div
   const subject = document.createElement('div');
@@ -117,25 +131,21 @@ function createEmailContainer(email, mailbox) {
   subject.textContent = email.subject.slice(0, 50);
   clickableContainer.appendChild(subject);
 
-  // Creates timestamp div
-  const time = document.createElement('div');
-  time.classList.add('email-time');
-  time.textContent = email.timestamp;
-  clickableContainer.appendChild(time);
-
-  // Appends Clickable container to email container
+  // Appends containers
   emailContainer.appendChild(clickableContainer);
 
   // Add archive/unarchive button to inbox and archive mailboxes
   if (mailbox !== 'sent') {
     const archiveButton = document.createElement('button');
-    archiveButton.classList.add('email-archive', 'btn', 'btn-primary');
-    archiveButton.textContent = email.archived ? 'Unarchive' : 'Archive';
+    archiveButton.classList.add('email-archive', 'btn', 'btn-light');
+    archiveButton.innerHTML = email.archived
+      ? '<img src="/static/mail/archive_black.svg" width="20" height="20" class="d-inline-block align-top" alt="Unarchive"> Unarchive'
+      : '<img src="/static/mail/archive_black.svg" width="20" height="20" class="d-inline-block align-top" alt="Archive"> Archive';
     archiveButton.addEventListener('click', () => { archiveEmail(email); });
     emailContainer.appendChild(archiveButton);
   }
 
-  document.querySelector('#emails-view').appendChild(emailContainer);
+  document.querySelector('#emails-view-container').appendChild(emailContainer);
 }
 
 /* --------------------
@@ -157,8 +167,8 @@ function sendEmail() {
     .then((response) => response.json())
     .then((result) => {
       if (result.error) {
-        document.querySelector('#alert').style.display = 'block';
-        document.querySelector('#alert').textContent = result.error;
+        document.querySelector('#alert-compose').style.display = 'block';
+        document.querySelector('#alert-compose').textContent = result.error;
       } else {
         loadMailbox('sent');
       }
@@ -170,7 +180,12 @@ function composeEmail() {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#open-email-view').style.display = 'none';
-  document.querySelector('#alert').style.display = 'none';
+  document.querySelector('#alert-compose').style.display = 'none';
+  document.querySelector('#alert-email').style.display = 'none';
+
+  document.querySelector('#inbox').classList.remove('nav-active');
+  document.querySelector('#archived').classList.remove('nav-active');
+  document.querySelector('#sent').classList.remove('nav-active');
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -211,22 +226,41 @@ function loadMailbox(mailbox) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-email-view').style.display = 'block';
-  document.querySelector('#alert').style.display = 'none';
-
+  document.querySelector('#alert-compose').style.display = 'none';
+  document.querySelector('#alert-email').style.display = 'none';
   document.querySelector('.card').style.display = 'none';
-  document.querySelector('#empty-email').style.display = 'block';
+  document.querySelector('#empty-email').style.display = 'flex';
+
+  if (mailbox === 'inbox') {
+    document.querySelector('#inbox').classList.add('nav-active');
+    document.querySelector('#archived').classList.remove('nav-active');
+    document.querySelector('#sent').classList.remove('nav-active');
+  } else if (mailbox === 'archive') {
+    document.querySelector('#inbox').classList.remove('nav-active');
+    document.querySelector('#archived').classList.add('nav-active');
+    document.querySelector('#sent').classList.remove('nav-active');
+  } else {
+    document.querySelector('#inbox').classList.remove('nav-active');
+    document.querySelector('#archived').classList.remove('nav-active');
+    document.querySelector('#sent').classList.add('nav-active');
+  }
 
   // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+  document.querySelector('#empty-email-mailbox').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
+  // Clear emails
+  document.querySelector('#emails-view-container').innerHTML = '';
   fetch(`/emails/${mailbox}`)
     .then((response) => response.json())
     .then((emails) => {
       if (emails.error) {
-        document.querySelector('#alert').style.display = 'block';
-        document.querySelector('#alert').textContent = emails.error;
-      } else {
+        document.querySelector('#alert-email').style.display = 'block';
+        document.querySelector('#alert-email').textContent = emails.error;
+      } else if (emails.length !== 0) {
+        document.querySelector('#no-emails').style.display = 'none';
         emails.forEach((email) => createEmailContainer(email, mailbox));
+      } else {
+        document.querySelector('#no-emails').style.display = 'flex';
       }
     });
 }
