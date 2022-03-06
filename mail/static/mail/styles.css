@@ -192,6 +192,7 @@ a.navbar-brand, #logout{
 #open-email-view{
 
   padding: 10px;
+  flex:1;
 
 }
 
