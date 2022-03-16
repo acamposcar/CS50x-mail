@@ -1,20 +1,20 @@
-
 {% extends "mail/layout.html" %} {% load static %} {% block body %}
 
 <nav class="navbar navbar-expand-lg" id="header">
-    <a class="navbar-brand " href="/">
+  <a class="navbar-brand " href="/">
     <img src="{% static 'mail/mail.svg' %}" width="35" height="35" class="d-inline-block align-top" alt="">
     The Mail
   </a>
 
-    <div class="navbar-nav ml-auto">
-      <ul class="navbar-nav mr-auto">
+  <div class="navbar-nav ml-auto">
+    <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
         {{ request.user.email }}
       </li>
     </ul>
 
-      <span><a id="logout" href="{% url 'logout' %}"><img src="{% static 'mail/log-out.svg' %}" width="20" height="20" class="d-inline-block align-top" alt="Logout"> Log Out</a></span>
+    <span><a id="logout" href="{% url 'logout' %}"><img src="{% static 'mail/log-out.svg' %}" width="20" height="20"
+          class="d-inline-block align-top" alt="Logout"> Log Out</a></span>
 
   </div>
 </nav>
@@ -24,74 +24,75 @@
 
     <button class="compose-btn btn btn-primary" id="compose">Compose</button>
 
-    <div class="nav-bn" id="inbox"><img src="{% static 'mail/inbox.svg' %}" width="20" height="20" class="d-inline-block align-top" alt="Inbox"> Inbox</div>
-    <div class="nav-bn" id="sent"><img src="{% static 'mail/send.svg' %}" width="20" height="20" class="d-inline-block align-top" alt="Send"> Sent</div>
-    <div class="nav-bn" id="archived"><img src="{% static 'mail/archive_white.svg' %}" width="20" height="20" class="d-inline-block align-top" alt="Archive"> Archived</div>
-    
+    <div class="nav-bn" id="inbox"><img src="{% static 'mail/inbox.svg' %}" width="20" height="20"
+        class="d-inline-block align-top" alt="Inbox"> Inbox</div>
+    <div class="nav-bn" id="sent"><img src="{% static 'mail/send.svg' %}" width="20" height="20"
+        class="d-inline-block align-top" alt="Send"> Sent</div>
+    <div class="nav-bn" id="archived"><img src="{% static 'mail/archive_white.svg' %}" width="20" height="20"
+        class="d-inline-block align-top" alt="Archive"> Archived</div>
+
     <hr />
   </div>
-    
 
-    <div id="emails-view">
-            <div id="alert-email" class="alert alert-danger"></div>
 
-      <div id="no-emails">
-        <img src="{% static 'mail/search.svg' %}" width="60" height="60" class="d-inline-block align-top" alt="Search">
-        <h6 id="no-emails-text">No emails found</h6>
-      </div>
-      <div id="emails-view-container"></div>
+  <div id="emails-view">
+    <div id="alert-email" class="alert alert-danger"></div>
+
+    <div id="no-emails">
+      <img src="{% static 'mail/search.svg' %}" width="60" height="60" class="d-inline-block align-top" alt="Search">
+      <h6 id="no-emails-text">No emails found</h6>
     </div>
+    <div id="emails-view-container"></div>
+  </div>
 
-    <div id="open-email-view">
-      <div id="empty-email">
-        <img src="{% static 'mail/message-square.svg' %}" width="60" height="60" class="d-inline-block align-top" alt="Mail">
-        <div id="empty-email-mailbox"></div>
-
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <h4 id="open-email-subject"></h4>
-          <div id="open-email-sender"></div>
-          <div id="open-email-recipients"></div>
-          <div id="open-email-time"></div>
-          <hr>
-          <button id="open-email-reply" class="btn btn-light"><img src="{% static 'mail/corner-up-left.svg' %}" width="20" height="20" class="d-inline-block align-top" alt="Archive"> Reply</button>
-        </div>
-        <div class="card-body">
-          <p id="open-email-body"></p>
-        </div>
-      </div>
+  <div id="open-email-view">
+    <div id="empty-email">
+      <img src="{% static 'mail/message-square.svg' %}" width="60" height="60" class="d-inline-block align-top"
+        alt="Mail">
+      <div id="empty-email-mailbox"></div>
 
     </div>
-
-    <div id="compose-view">
-      <div id="alert-compose" class="alert alert-danger"></div>
     <div class="card">
-    <div class="card-header">
-  <h3>New Email</h3>
-</div>
-<div class="card-body">
-  <form id="compose-form">
-    <div class="form-group">
-      From:
-      <input disabled class="form-control" value="{{ request.user.email }}" />
-    </div>
-    <div class="form-group">
-      <input id="compose-recipients" class="form-control" placeholder="To"/>
-    </div>
-    <div class="form-group">
-      <input class="form-control" id="compose-subject" placeholder="Subject" />
-    </div>
-    <textarea
-      class="form-control"
-      id="compose-body"
-      placeholder="Body"
-    ></textarea>
-    <input type="submit" class="btn btn-light" value="Send"/>
-  </form>
-          </div>
+      <div class="card-header">
+        <h4 id="open-email-subject"></h4>
+        <div id="open-email-sender"></div>
+        <div id="open-email-recipients"></div>
+        <div id="open-email-time"></div>
+        <hr>
+        <button id="open-email-reply" class="btn btn-light"><img src="{% static 'mail/corner-up-left.svg' %}" width="20"
+            height="20" class="d-inline-block align-top" alt="Archive"> Reply</button>
       </div>
-</div>
+      <div class="card-body">
+        <p id="open-email-body"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="compose-view">
+    <div id="alert-compose" class="alert alert-danger"></div>
+    <div class="card">
+      <div class="card-header">
+        <h3>New Email</h3>
+      </div>
+      <div class="card-body">
+        <form id="compose-form">
+          <div class="form-group">
+            From:
+            <input disabled class="form-control" value="{{ request.user.email }}" />
+          </div>
+          <div class="form-group">
+            <input id="compose-recipients" class="form-control" placeholder="To" />
+          </div>
+          <div class="form-group">
+            <input class="form-control" id="compose-subject" placeholder="Subject" />
+          </div>
+          <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+          <input type="submit" class="btn btn-light" value="Send" />
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 
