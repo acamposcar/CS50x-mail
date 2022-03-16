@@ -167,9 +167,6 @@ a.navbar-brand, #logout{
   font-size: 11pt;
 }
 
-.email-archive {
-}
-
 #open-email-body{
   white-space: pre-line;
 }
@@ -212,14 +209,6 @@ a.navbar-brand, #logout{
   justify-content: center;
   min-height: 60vh;
   gap:20px;
-}
-
-#no-emails-text{
-
-}
-
-input[type="submit"]{
-
 }
 
 #login{
