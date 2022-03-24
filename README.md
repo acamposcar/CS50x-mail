@@ -1,8 +1,8 @@
 # CS50x-mail
 Design a front-end for an email client that makes API calls to send and receive emails.
 
-[Specifications](https://cs50.harvard.edu/web/2020/projects/3/mail/)
-[Screencast](https://www.youtube.com/watch?v=eEfJGCZ1xf8)
+- [Specifications](https://cs50.harvard.edu/web/2020/projects/3/mail/)
+- [Screencast](https://www.youtube.com/watch?v=eEfJGCZ1xf8)
 
 ![Demo GIF](https://user-images.githubusercontent.com/9263545/159908669-e55b5cf8-dd4d-4b65-adb1-5a5001946263.gif)
 
