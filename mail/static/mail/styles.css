@@ -188,7 +188,7 @@ a.navbar-brand, #logout{
 
   padding: 10px;
   flex:1;
-
+  overflow:auto;
 }
 
 #emails-view{
@@ -198,6 +198,7 @@ a.navbar-brand, #logout{
   border-width: thin;
   border-color: #e7e9ec;
   padding: 10px;
+  overflow:auto;
 }
 
 #no-emails {
