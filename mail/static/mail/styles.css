@@ -112,7 +112,6 @@ a.navbar-brand, #logout{
   transition: max-height 0.15s ease-out;
   overflow: hidden;
   max-height: 500px;
-  
 }
 
 .email-container.hide{
@@ -122,6 +121,7 @@ a.navbar-brand, #logout{
   border-style: none;
   margin: 0px;
 }
+
 .email-container:hover {
   background-color: rgb(217, 219, 223);
 }
@@ -163,7 +163,7 @@ a.navbar-brand, #logout{
 }
 
 .email-time {
-  font-size: 11pt;
+  font-size: 10pt;
 }
 
 #open-email-body{
