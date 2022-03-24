@@ -33,7 +33,8 @@ textarea {
   height: 70px;
   padding: 10px;
   color:white;
-  min-width: calc(150px + 520px + 520px);
+  /* Nav + Email list + Email View */
+  min-width: calc(150px + 520px + 350px);
 }
 
 #container-flexbox{
@@ -171,7 +172,6 @@ a.navbar-brand, #logout{
 
 #empty-email{
   flex:1;
-  min-width: 500px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -187,8 +187,9 @@ a.navbar-brand, #logout{
 #open-email-view{
 
   padding: 10px;
+  min-width: 350px;
   flex:1;
-  overflow:auto;
+  overflow-y:auto;
 }
 
 #emails-view{
@@ -198,7 +199,7 @@ a.navbar-brand, #logout{
   border-width: thin;
   border-color: #e7e9ec;
   padding: 10px;
-  overflow:auto;
+  overflow-y:scroll;
 }
 
 #no-emails {
