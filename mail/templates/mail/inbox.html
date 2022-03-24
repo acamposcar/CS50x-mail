@@ -1,21 +1,19 @@
 {% extends "mail/layout.html" %} {% load static %} {% block body %}
 
-<nav class="navbar navbar-expand-lg" id="header">
+<nav class="navbar navbar-expand-sm" id="header">
   <a class="navbar-brand " href="/">
     <img src="{% static 'mail/mail.svg' %}" width="35" height="35" class="d-inline-block align-top" alt="">
     The Mail
   </a>
 
-  <div class="navbar-nav ml-auto">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
+  <div class="ml-auto">
+    <div class="mr-auto d-flex">
+      <div class="active">
         {{ request.user.email }}
-      </li>
-    </ul>
-
-    <span><a id="logout" href="{% url 'logout' %}"><img src="{% static 'mail/log-out.svg' %}" width="20" height="20"
-          class="d-inline-block align-top" alt="Logout"> Log Out</a></span>
-
+      </div>
+      <div><a id="logout" href="{% url 'logout' %}"><img src="{% static 'mail/log-out.svg' %}" width="20" height="20"
+            class="d-inline-block align-top" alt="Logout"> Log Out</a></div>
+    </div>
   </div>
 </nav>
 
